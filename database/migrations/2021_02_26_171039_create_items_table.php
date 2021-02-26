@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSquidsTable extends Migration
+class CreateItemsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateSquidsTable extends Migration
      */
     public function up()
     {
-        Schema::create('squids', function (Blueprint $table) {
+        Schema::create('items', function (Blueprint $table) {
             $table->id();
             $table->integer('submission_id');
             $table->integer('suffix_id');
@@ -35,6 +35,6 @@ class CreateSquidsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('squids');
+        Schema::dropIfExists('items');
     }
 }

@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Item;
+
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -15,8 +17,7 @@ class DatabaseSeeder extends Seeder
      */
 
     private function import($path = "data.json"){
-        $file_contents = json_decode(file_get_contents(base_path($path)), true);
-        dd($file_contents);
+        return json_decode(file_get_contents(base_path($path)), true);
     }
 
 
@@ -32,7 +33,9 @@ class DatabaseSeeder extends Seeder
         //! Importing the data.json file as a seed source
         //  I'm using json fields to simulate relations.
         //  Also in models i'm using accessors to the same effect.
-        $this->import();
+        $item = $this->import();
+        Item::create($item);
+
 
     }
 }
