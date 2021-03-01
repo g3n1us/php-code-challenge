@@ -21,19 +21,37 @@ Route::get('/{item?}', function (Item $item = null) {
     }
     $view_data = $item->cost_data['data'];
     [ 'labor' => $labor, 'non_labor' => $non_labor ] = $view_data;
-    foreach([$labor, $non_labor] as $v){
-        $performers = calculate($v);
-        $total = $performers->pluck('fiscal_years')->map(function($v){
-            return collect($v)->sum('total_dollars');
-        })->sum();
-        dump($performers, $total);
-    }
 
-    return view('item', ['item' => $item]);
+    $performers = collect(['labor' => $labor, 'non_labor' => $non_labor])->reduce(function($curr, $v, $name){
+        foreach(calculate($v) as $performer => $tasks){
+            if(!isset($curr[$performer])){
+                $curr[$performer] = [];
+            }
+            foreach($tasks as $task){
+                if(!isset($curr[$performer][$task['title']])){
+                    $curr[$performer][$task['title']] = [];
+                }
+                $curr[$performer][$task['title']][$name] = $task['total'];
+                $curr[$performer][$task['title']]['title'] = $task['title'];
+            }
+        }
+        return $curr;
+    }, []);
+
+    return view('item', ['item' => $item, 'data' => collect($performers)]);
 });
 
 function calculate($v){
     $groups = Arr::get($v, 'groups');
-    $performers = collect($groups)->pluck('tasks.0.items', 'performer.display_name')->flatten(1);
-    return $performers;
+
+    return collect($groups)->pluck('tasks', 'performer.display_name')->map(function($v, $k){
+        return collect($v)->map(function($vv){
+
+                $vv['total'] = collect($vv['items'])->pluck('fiscal_years')->map(function($vvv){
+                    return collect($vvv)->sum('total_dollars');
+                })->sum();
+                return $vv;
+            });
+    });
+
 }
