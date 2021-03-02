@@ -20,8 +20,6 @@ Artisan::command('inspire', function () {
 
 
 Artisan::command('build-app', function () {
-    $this->call('key:generate');
-    dd(env('APP_KEY'));
     if(!File::exists(database_path('database.sqlite'))){
         touch(database_path('database.sqlite'));
         $this->info('The empty sqlite file has been created.');
