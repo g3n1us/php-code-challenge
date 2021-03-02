@@ -24,6 +24,7 @@ Artisan::command('build-app', function () {
         touch(database_path('database.sqlite'));
         $this->info('The empty sqlite file has been created. You may now run:');
         $this->line('php artisan migrate --seed');
+        $this->line('composer run-script post-create-project-cmd');
         $this->info('');
     }
     else $this->info('database.sqlite exists.');
