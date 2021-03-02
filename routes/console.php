@@ -32,11 +32,10 @@ Artisan::command('build-app', function () {
         $this->info('This allows CI deployments to selectively cycle app keys');
 
         if(!env('APP_KEY')){
-            $this->info("The app key hasn'nt been set. Confirm below if you'd like to set it.");
-            $this->call('key:generate');
+            $this->info("The app key hasn'nt been set. Adding to .env");
+            exec('echo APP_KEY=$(php artisan key:generate --show) > .env');
         }
     }
-
     $this->info('You may now run:');
     $this->line('php artisan migrate --seed');
     $this->line('composer run-script post-create-project-cmd');
